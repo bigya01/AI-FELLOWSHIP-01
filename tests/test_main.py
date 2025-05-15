@@ -5,7 +5,9 @@ from app.main import app
 client = TestClient(app)
 
 
-def test_health_check():
-    response = client.get("/health")
+def test_shorten_url():
+    response = client.post("/shorten", json={"url": "https://example.com"})
     assert response.status_code == 200
-    assert response.json() == {"status": "ok"}
+    data = response.json()
+    assert "short_url" in data
+    assert data["short_url"].startswith("http://localhost:8000/")
