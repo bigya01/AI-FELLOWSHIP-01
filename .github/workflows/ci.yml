@@ -19,6 +19,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Debug file encoding and contents
+        run: |
+          file requirements-dev.txt
+          cat -A requirements-dev.txt
+
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
