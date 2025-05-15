@@ -19,8 +19,6 @@ jobs:
         with:
           python-version: '3.12'
 
-
-
       - name: Debug file encoding and contents
         run: |
           file requirements-dev.txt
@@ -28,12 +26,15 @@ jobs:
 
       - name: Normalize requirements-dev.txt encoding
         run: |
-          # Try converting from UTF-16 to UTF-8
-          iconv -f utf-16 -t utf-8 requirements-dev.txt -o temp.txt && mv temp.txt requirements-dev.txt || true
-
-          # Strip UTF-8 BOM if present
-          sed -i '1s/^\xEF\xBB\xBF//' requirements-dev.txt
-
+          # Detect UTF-16 LE BOM and convert if present
+          if head -c 2 requirements-dev.txt | od -An -tx1 | grep -q 'ff fe'; then
+            echo "File is UTF-16 LE, converting to UTF-8"
+            iconv -f utf-16le -t utf-8 requirements-dev.txt -o requirements-dev.txt.utf8
+            mv requirements-dev.txt.utf8 requirements-dev.txt
+          else
+            echo "File is NOT UTF-16 LE, stripping UTF-8 BOM if present"
+            sed -i '1s/^\xEF\xBB\xBF//' requirements-dev.txt
+          fi
 
       - name: Install dependencies
         run: |
