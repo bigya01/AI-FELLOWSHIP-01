@@ -19,10 +19,20 @@ jobs:
         with:
           python-version: '3.12'
 
+
+
       - name: Debug file encoding and contents
         run: |
           file requirements-dev.txt
           cat -A requirements-dev.txt
+
+      - name: Normalize requirements-dev.txt encoding
+        run: |
+          # Try converting from UTF-16 to UTF-8
+          iconv -f utf-16 -t utf-8 requirements-dev.txt -o temp.txt && mv temp.txt requirements-dev.txt || true
+
+          # Strip UTF-8 BOM if present
+          sed -i '1s/^\xEF\xBB\xBF//' requirements-dev.txt
 
 
       - name: Install dependencies
