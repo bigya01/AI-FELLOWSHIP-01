@@ -14,3 +14,14 @@ pip install -r requirements.txt```
 4. Run the FastAPI application using: ```uvicorn app.main:app --reload```
 
 
+## Running with Docker
+
+1. Build the Docker image:
+
+```bash
+docker build -t url-shortener .
+docker run -d -p 8000:8000 url-shortener
+```
+The app will be available at: http://localhost:8000
+
+
